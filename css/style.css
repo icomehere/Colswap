@@ -1,0 +1,36 @@
+body{
+    background-color: #f2f5f2 !important;
+}
+.card-body p{
+    min-height: 80px;
+}
+.card-body button{
+    background: none;
+    border:none;
+}
+.card .bg-image{
+    width:306px;
+    /*height:204px;*/
+}
+.btn_value{
+    border: none;
+    background-color: #fbfbfb;
+    display: inline;
+    width: 60%;
+}
+.table>:not(caption)>*>*{
+    padding:1rem 0.8rem;
+}
+.bs-stepper-circle{
+    background-color: #ffa900;
+}
+#T1{
+width: 60%;
+margin-left: auto;
+margin-right: auto;
+text-align:left;
+}
+#T1 .alert{
+padding: 0.3rem 1.5rem;
+margin-bottom: 0.15rem;
+}
