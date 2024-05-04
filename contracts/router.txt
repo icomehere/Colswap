@@ -97,10 +97,9 @@ interface IWTRX {
 }
 
 contract ColswapRouter {
-
-    address public immutable usdt =0x5daee9BD8f6B817d375C85558c0983BBdE9d1a6e;
-    address public immutable wtrx = 0x19395F2a6535D2d855d8Ca0ECa35b0EB10646EDA;
-    address public immutable col = 0xcA2A32afc42A6ec7f68d19d496880AAD636256fA;
+    address public immutable wtrx = 0xf68Ba987E647299b095d166486DE45d55066df70;
+    address public immutable usdt = 0x3325fe256FBa89BF0f639306D37e1AA459b10498;
+    address public immutable col = 0x9F91D45103C7cd202b7B773fF6087321FF52E553;
 
     bytes32 public initCodeHash;
     address public factory;
@@ -250,7 +249,7 @@ contract ColswapRouter {
         //uint v = c1 > c0 ? (c1 - c0) : (c0 - c1);
         ICol(col).mint(to, (c1 > c0 ? (c1 - c0) : (c0 - c1)) * 10**12);//usdt dec:6,col dec:18,12=18-6
         
-        if(block.timestamp - lastRebaseTime > 1){ //true:24*60*60=86400
+        if(block.timestamp - lastRebaseTime > 1800){ //true:24*60*60=86400
             uint price0CL = IColswapPair(col_USDT).price0CumulativeLast() * 10**12; //usdt dec:6,col dec:18,12=18-6
             if(price0CL/ (block.timestamp - firstTime) > (2**112 * uint(105) /100)) {
                 ICol(col).rebase(true);

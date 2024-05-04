@@ -39,7 +39,7 @@ contract ColswapPair {
     address public token0;
     address public token1;
     //address public colswapRouter = this.tronWeb.address.toHex('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t');
-    address public colswapRouter = 0xc674805580BF95139db83997F02A46D9433Ebd2F; //must Assignment
+    address public colswapRouter = 0xbc99b049abb4AaE82D558f179aF6751794eeD1aa; //must Assignment
     //                             0xdAC17F958D2ee523a2206206994597C13D831ec7
     //string public constant colswapRouter = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';//must change
     
