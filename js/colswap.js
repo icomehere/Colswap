@@ -1,10 +1,10 @@
-      var wtrxAddress = "TCGad7X1FZAp8Qw233ocj62ZnNU4FKwAR6"; 
-      var usdtAddress = "TJWZP54oUgfTX8Fe7b8FgwzbZgSz3LsVUi"; 
-      var colAddress = "TUQA3n1QxaTLNgLFVYPjg3sP85KtL1zMWQ"; 
-      var routerAddress = "TU4YMhCoTB8TT6yNAG8MQLUTaT46YL3Yqy"; 
-      var factoryAddress = "TGpMN9KAtSH8NxxgJD5JqVjDLidVm24cds"; 
-      var col_usdtAddress = "TTxJ8fLJkAPEokTk8pcqB7KLkB9hfgyBxr"; 
-      var wtrx_usdtAddress = "TQVGMFd3L7eifx7oGR1F6sn1KBefkrRYK5"; 
+      var wtrxAddress = "TYSpY9igT3gebEVRxwknkAehTriUU9ms3D"; 
+      var usdtAddress = "TEdeydETRec5gvdvniYTWRvbr1BQnMRebT"; 
+      var colAddress = "TQWw8xjMpJJS5Ch7Po3UT8pBc2CGz8x38K"; 
+      var routerAddress = "TTAS9bWxWqeZLPsDAbjD79oFRtrJkR78HT"; 
+      var factoryAddress = "TPVyPk6kC4AEMrR5DAL2iuAhJKa3oFamSS"; 
+      var col_usdtAddress = "THqaipBjgVLEpW2eD9GVzygSW9Un3uAgZk"; 
+      var wtrx_usdtAddress = "TTEigmKutf7Zeax8WF9mHR1CWgiMCFdBf1"; 
       
       var tronWeb;
       var wtrx;
@@ -16,10 +16,26 @@
       var wtrx_usdt;
       var userAccount;
 
-      async function getTronweb(){      	
+      async function getTronweb(){  
+        if(window.tronWeb){
+          this.tronWeb =  window.tronWeb;
+          //this.walletAddress = this.tronWeb.defaultAddress.base58;
+          tronWeb =  this.tronWeb;
+          userAccount = tronWeb.defaultAddress.base58;
+          document.getElementById("B0").innerHTML = userAccount;
+          wtrx = tronWeb.contract(wtrxABI, wtrxAddress);
+          usdt = tronWeb.contract(usdtABI, usdtAddress);
+          col = tronWeb.contract(colABI, colAddress);
+          router = tronWeb.contract(routerABI, routerAddress);
+          factory = tronWeb.contract(factoryABI, factoryAddress);
+          col_usdt = tronWeb.contract(pairABI, col_usdtAddress);
+          wtrx_usdt = tronWeb.contract(pairABI, wtrx_usdtAddress);
+          showBalanceAll(); 
+      }  
+        /*	
         if (window.tronLink.ready) {
           tronWeb = tronLink.tronWeb;
-          userAccount = tronWeb.defaultAddress.base58;
+          userAccount = tronWeb.defaultAddress.base58;alert(userAccount);
           document.getElementById("B0").innerHTML = userAccount;
           wtrx = tronWeb.contract(wtrxABI, wtrxAddress);
           usdt = tronWeb.contract(usdtABI, usdtAddress);
@@ -31,13 +47,28 @@
           showBalanceAll();
           
         } else {
-          /*
           const res = await tronLink.request({ method: 'tron_requestAccounts' });
           if (res.code === 200) {
             tronWeb = tronLink.tronWeb;
-          }*/
-        }
+          }
+        }*/
         //return tronWeb;
+      }
+
+      async function getWTRX() {
+        await wtrx.deposit().send({callValue:1000000000});
+      }
+      
+      async function getUSDT() {
+        await usdt.mint().send();
+      }
+      
+      async function approveAll() {
+        await wtrx.approve(routerAddress,"1000000000000000000000000000000000000000").send();
+        await usdt.approve(routerAddress,"1000000000000000000000000000000000000000").send();
+        await col.approve(routerAddress,"1000000000000000000000000000000000000000").send();
+        await col_usdt.approve(routerAddress,"1000000000000000000000000000000000000000").send();
+        await wtrx_usdt.approve(routerAddress,"1000000000000000000000000000000000000000").send();
       }
 
       async function showBalance(sid) {
@@ -145,11 +176,11 @@
           router.swapExactTokensForTokens(amount,"1",[wtrxAddress,usdtAddress],userAccount).send();
         }
         if(tokenA=="col"&&tokenB=="wtrx") {
-          amount = document.getElementById("N1").value*1e18;
+          amount = document.getElementById("N1").value*1e6+"000000000000";
           router.swapExactTokensForTokens(amount,"1",[colAddress,usdtAddress,wtrxAddress],userAccount).send();
         }
         if(tokenA=="col"&&tokenB=="usdt") {
-          amount = document.getElementById("N1").value*1e18;
+          amount = document.getElementById("N1").value*1e6+"000000000000";
           router.swapExactTokensForTokens(amount,"1",[colAddress,usdtAddress],userAccount).send();
         }
         if(tokenA=="usdt"&&tokenB=="wtrx") {
@@ -243,8 +274,8 @@
         var amountB = document.getElementById("N2").value*1e6+"";
         var amountBMin = document.getElementById("N2").value*0.8*1e6+"";
         if(document.getElementById("S1").value=="col") {
-          amountA = document.getElementById("N1").value*1e18+"";
-          amountAMin = document.getElementById("N1").value*0.8*1e18+"";
+          amountA = document.getElementById("N1").value*1e6+"000000000000";
+          amountAMin = document.getElementById("N1").value*0.8*1e6+"000000000000";
           await router.addLiquidity(colAddress,usdtAddress,amountA,amountB,amountAMin,amountBMin,userAccount,"1823122819").send();
         }
         if(document.getElementById("S1").value=="wtrx") {
@@ -257,11 +288,11 @@
       async function withdrawLiquidity() {
       	var liq;
         if(document.getElementById("S1").value=="col") {
-          liq = await col_usdt.balanceOf(userAccount).call()*document.getElementById("N1").value/document.getElementById("T11").value;
+          liq = (await col_usdt.balanceOf(userAccount).call()*document.getElementById("N1").value/document.getElementById("T11").value).toFixed(0);
           await router.removeLiquidity(colAddress,usdtAddress,liq,"1","1",userAccount,"1823122819").send();
         }
         if(document.getElementById("S1").value=="wtrx") {
-          liq = (await wtrx_usdt.balanceOf(userAccount).call()*document.getElementById("N1").value/document.getElementById("T21").value).toFixed(0);
+          liq = (await wtrx_usdt.balanceOf(userAccount).call()*document.getElementById("N1").value/document.getElementById("T11").value).toFixed(0);
           await router.removeLiquidity(wtrxAddress,usdtAddress,liq,"1","1",userAccount,"1823122819").send();
         }
       }
